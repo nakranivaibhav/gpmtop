@@ -19,8 +19,8 @@ gpmtop
 gpmtop --demo              # no GPU? replay synthetic data
 ```
 
-You need Linux, `nvidia-smi` on your `PATH`, Python 3.9+, and a GPU and driver
-that support GPM (see [Requirements](#requirements)).
+You need Linux, `nvidia-smi` on your `PATH`, Python 3.9+, and an NVIDIA GPU
+from the **Hopper generation or newer** (see [Requirements](#requirements)).
 
 ## Reading the map
 
@@ -77,10 +77,24 @@ The map needs metric 10 (DRAM) and at least one of 5 (tensor) or 12 (FP32).
 
 ## Requirements
 
-GPM needs a recent NVIDIA GPU and driver. It is confirmed on an RTX 5090
-(Blackwell) with driver 580. It should also work on Hopper (H100/H200), but that is untested.
-If your GPU doesn't support GPM, gpmtop tells you after a few seconds. Reports
-of other GPUs that work (or don't) are welcome in an issue.
+gpmtop reads GPM (GPU Performance Monitoring) counters. NVIDIA supports GPM
+only on [Hopper or newer](https://docs.nvidia.com/deploy/nvml-api/api/group__nvmlGpmFunctions.html) GPUs.
+
+| Works | Doesn't work |
+|---|---|
+| **Hopper:** H100, H200, GH200 | **Ada:** RTX 4090/4080, L4, L40, L40S, RTX 6000 Ada |
+| **Blackwell:** B200, GB200, RTX 50-series | **Ampere:** A100, A10, RTX 30-series |
+| | **Older:** V100, T4, and so on |
+
+Tested on an RTX 5090 with driver 580. On an unsupported GPU, gpmtop doesn't
+crash; after about 10 seconds it shows "No GPM metrics from this GPU".
+
+Ada launched alongside Hopper, but it comes earlier in NVIDIA's architecture
+order and doesn't get GPM. On Ada and Ampere datacenter cards, NVIDIA's
+[DCGM](https://github.com/NVIDIA/DCGM) exposes similar profiling metrics, but
+gpmtop doesn't read DCGM yet.
+
+Reports from other GPUs are welcome in an issue.
 
 ## License
 
